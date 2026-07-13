@@ -203,6 +203,7 @@
     .hero-bg { position: absolute; inset: 0; }
     .hero-bg-gradient {
       position: absolute; inset: 0;
+      z-index: 1;
       background:
         radial-gradient(ellipse at 70% 50%, rgba(201,168,76,0.09) 0%, transparent 55%),
         radial-gradient(ellipse at 20% 80%, rgba(201,168,76,0.05) 0%, transparent 50%),
@@ -215,14 +216,79 @@
         radial-gradient(ellipse at 20% 80%, rgba(201,168,76,0.07) 0%, transparent 50%),
         linear-gradient(135deg, #F0EDE8 0%, #EDE8E0 100%);
     }
-    .hero-bg::after {
+    /* ── HERO INNER SPLIT ──────────────────────────── */
+    .hero-inner {
+      position: relative; z-index: 5; max-width: 1280px; margin: 0 auto; padding: 0 2.5rem; width: 100%;
+      display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 4rem; align-items: center;
+    }
+    .hero-text-side {
+      display: flex; flex-direction: column; align-items: flex-start;
+      position: relative; z-index: 2;
+    }
+
+    /* ── HERO SLIDESHOW ────────────────────────────── */
+    .hero-media-side {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4/5;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      background: #000;
+      animation: fadeSlideUp 0.8s 0.6s both;
+      z-index: 2;
+    }
+    .hero-media-side::after {
       content: '';
       position: absolute; inset: 0;
-      background: linear-gradient(to right, rgba(8,8,10,0.88) 20%, rgba(8,8,10,0.5) 60%, rgba(8,8,10,0.25) 100%);
-      transition: background 0.4s;
+      z-index: 3;
+      background: linear-gradient(to top, rgba(8,8,10,0.4) 0%, transparent 100%);
+      pointer-events: none;
     }
-    html.light-theme .hero-bg::after {
-      background: linear-gradient(to right, rgba(245,245,247,0.92) 20%, rgba(245,245,247,0.6) 60%, rgba(245,245,247,0.2) 100%);
+    html.light-theme .hero-media-side::after {
+      background: linear-gradient(to top, rgba(245,245,247,0.2) 0%, transparent 100%);
+    }
+    .hero-slide {
+      position: absolute; inset: 0;
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      z-index: 1;
+      transition: opacity 1.2s ease-in-out;
+      transform: scale(1.03);
+    }
+    .hero-slide.active {
+      opacity: 1;
+    }
+    .hero-slide.kenBurnsUp {
+      animation: kenBurnsUp 8s ease forwards;
+    }
+    .hero-slide.kenBurnsDown {
+      animation: kenBurnsDown 8s ease forwards;
+    }
+    .hero-slide.kenBurnsRight {
+      animation: kenBurnsRight 8s ease forwards;
+    }
+    .hero-slide.kenBurnsLeft {
+      animation: kenBurnsLeft 8s ease forwards;
+    }
+
+    @keyframes kenBurnsUp {
+      0% { transform: scale(1.04) translateY(0); }
+      100% { transform: scale(1.12) translateY(-2.5%); }
+    }
+    @keyframes kenBurnsDown {
+      0% { transform: scale(1.04) translateY(0); }
+      100% { transform: scale(1.12) translateY(2.5%); }
+    }
+    @keyframes kenBurnsRight {
+      0% { transform: scale(1.04) translateX(0); }
+      100% { transform: scale(1.12) translateX(2.5%); }
+    }
+    @keyframes kenBurnsLeft {
+      0% { transform: scale(1.04) translateX(0); }
+      100% { transform: scale(1.12) translateX(-2.5%); }
     }
     .hero-grid-lines { position: absolute; inset: 0; pointer-events: none; }
     .hero-grid-line {
@@ -234,7 +300,7 @@
     .hero-grid-line:nth-child(1) { top: 28%; }
     .hero-grid-line:nth-child(2) { top: 65%; animation-delay: 1.5s; }
 
-    .hero-content { position: relative; z-index: 2; max-width: 1280px; margin: 0 auto; padding: 0 2.5rem; width: 100%; }
+    .hero-inner { position: relative; z-index: 5; max-width: 1280px; margin: 0 auto; padding: 0 2.5rem; width: 100%; }
 
     .hero-eyebrow { display: flex; align-items: center; gap: 10px; margin-bottom: 1.5rem; animation: fadeSlideUp 0.8s 0.2s both; }
     .hero-eyebrow .line { width: 32px; height: 1px; background: var(--primary); }
@@ -360,11 +426,8 @@
     .proj-card:hover { border-color: rgba(201,168,76,0.28); }
     .proj-img-wrap { position: relative; aspect-ratio: 4/5; overflow: hidden; }
 
-    .proj-ph { width: 100%; height: 100%; transition: transform 0.7s ease; }
-    .proj-ph-1 { background: linear-gradient(145deg, #1c1508 0%, #2e2010 50%, #100d06 100%); }
-    .proj-ph-2 { background: linear-gradient(145deg, #0c1220 0%, #182036 50%, #080c16 100%); }
-    .proj-ph-3 { background: linear-gradient(145deg, #1a0e0e 0%, #2c1414 50%, #0e0808 100%); }
-    .proj-card:hover .proj-ph { transform: scale(1.05); }
+    .proj-img-wrap img { width: 100%; height: 100%; transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1); }
+    .proj-card:hover .proj-img-wrap img { transform: scale(1.06); }
 
     .proj-img-overlay {
       position: absolute; inset: 0;
@@ -571,6 +634,8 @@
       .nav-links { display: none; }
       .nav-contact-btn { display: none; }
       .menu-toggle { display: flex; }
+      .hero-inner { grid-template-columns: 1fr; gap: 3rem; padding-top: 5rem; }
+      .hero-media-side { max-width: 400px; margin: 0 auto; }
       .hero h1 { font-size: clamp(2.2rem, 8vw, 3rem); }
       .cat-grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
       .cat-card { height: 360px; }
@@ -590,6 +655,57 @@
       .hero-btns { flex-direction: column; }
       .hero-btns .btn-primary, .hero-btns .btn-outline-primary { width: 100%; justify-content: center; }
     }
+
+    /* ── VIDEO GALLERY ──────────────────────────────── */
+    .video-gallery {
+      padding: 7rem 2.5rem;
+      border-top: 1px solid rgba(201,168,76,0.06);
+    }
+    .video-gallery-inner {
+      max-width: 1280px; margin: 0 auto;
+    }
+    .video-grid {
+      display: flex; justify-content: center; gap: 2.5rem; flex-wrap: wrap;
+    }
+    .video-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 8px; padding: 1rem; width: 100%; max-width: 320px;
+      transition: border-color 0.3s ease, transform 0.3s ease;
+    }
+    .video-card:hover {
+      border-color: rgba(201, 168, 76, 0.28);
+      transform: translateY(-2px);
+    }
+    .video-iframe-wrap {
+      position: relative;
+      padding-bottom: 177.77%; /* 9:16 Portrait Aspect Ratio */
+      height: 0;
+      overflow: hidden;
+      border-radius: 6px;
+      background: #000;
+    }
+    .video-iframe-wrap iframe {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      border: 0;
+    }
+    .video-info-block {
+      margin-top: 1.25rem;
+    }
+    .video-title {
+      font-size: 0.95rem; color: var(--white);
+      margin-bottom: 0.5rem; font-family: 'Inter', sans-serif; font-weight: 600;
+      line-height: 1.4;
+    }
+    .video-desc {
+      font-size: 0.78rem; color: var(--steel);
+      line-height: 1.55;
+    }
+
+    @media (max-width: 768px) {
+      .video-gallery { padding: 5rem 1.5rem; }
+    }
   </style>
 </head>
 <body>
@@ -607,6 +723,7 @@
       <a href="#" class="active">Home</a>
       <a href="#categories">Categories</a>
       <a href="#projects">Projects</a>
+      <a href="#gallery">Gallery</a>
       <a href="#contact">Contact</a>
     </div>
     <div class="nav-right">
@@ -648,37 +765,42 @@
       <a href="#"           class="mobile-link" onclick="closeMobileMenu()">Home</a>
       <a href="#categories" class="mobile-link" onclick="closeMobileMenu()">Categories</a>
       <a href="#projects"   class="mobile-link" onclick="closeMobileMenu()">Projects</a>
+      <a href="#gallery"    class="mobile-link" onclick="closeMobileMenu()">Gallery</a>
       <a href="#contact"    class="mobile-link" onclick="closeMobileMenu()">Contact</a>
     </div>
   </div>
 
   <!-- HERO -->
   <section class="hero" id="hero">
-    <div class="hero-bg">
-      <img src="pictures/6.jpeg" alt="Interior" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;">
+    <div class="hero-bg" id="heroBg">
       <div class="hero-bg-gradient"></div>
     </div>
     <div class="hero-grid-lines">
       <div class="hero-grid-line"></div>
       <div class="hero-grid-line"></div>
     </div>
-    <div class="hero-content">
-      <div class="hero-eyebrow">
-        <div class="line"></div>
-        <span>Premium Interior Design &middot; Dhaka, Bangladesh</span>
+    <div class="hero-inner">
+      <div class="hero-text-side">
+        <div class="hero-eyebrow">
+          <div class="line"></div>
+          <span>Premium Interior Design &middot; Dhaka, Bangladesh</span>
+        </div>
+        <h1>Elevate Your Space,<br /><span class="accent">Define</span><br />Your Style.</h1>
+        <p class="hero-desc">We craft spaces that inspire &mdash; blending timeless aesthetics with purposeful design to create interiors that feel truly yours.</p>
+        <div class="hero-btns">
+          <button class="btn-primary" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">
+            Get a Free Consultation
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </button>
+          <button class="btn-outline-primary" onclick="document.getElementById('projects').scrollIntoView({behavior:'smooth'})">
+            View Our Projects
+          </button>
+        </div>
       </div>
-      <h1>Elevate Your Space,<br /><span class="accent">Define</span><br />Your Style.</h1>
-      <p class="hero-desc">We craft spaces that inspire &mdash; blending timeless aesthetics with purposeful design to create interiors that feel truly yours.</p>
-      <div class="hero-btns">
-        <button class="btn-primary" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">
-          Get a Free Consultation
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-          </svg>
-        </button>
-        <button class="btn-outline-primary" onclick="document.getElementById('projects').scrollIntoView({behavior:'smooth'})">
-          View Our Projects
-        </button>
+      <div class="hero-media-side" id="heroMediaSide">
+        <!-- Slides will be inserted here dynamically -->
       </div>
     </div>
     <div class="scroll-indicator">
@@ -1022,6 +1144,40 @@
     </div>
   </section>
 
+  <!-- VIDEO GALLERY -->
+  <section class="video-gallery reveal" id="gallery">
+    <div class="video-gallery-inner">
+      <div class="section-heading">
+        <span class="section-eyebrow">Visual Inspiration</span>
+        <h2>Video Gallery</h2>
+        <p>Take a virtual tour through our crafted spaces and see our design philosophy come to life in full motion.</p>
+        <div class="divider"></div>
+      </div>
+      <div class="video-grid">
+        <!-- Video 1 (Facebook Reel 1) -->
+        <div class="video-card">
+          <div class="video-iframe-wrap">
+            <iframe src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Freel%2F2182469568991992&show_text=0&t=0" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
+          </div>
+          <div class="video-info-block">
+            <h4 class="video-title">Elegant Modern Suite Walkthrough</h4>
+            <p class="video-desc">A short cinematic tour showcasing clean bedroom geometry, premium warm wood paneling, and floating lighting accents.</p>
+          </div>
+        </div>
+        <!-- Video 2 (Facebook Reel 2) -->
+        <div class="video-card">
+          <div class="video-iframe-wrap">
+            <iframe src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Freel%2F1900320390670267&show_text=0&t=0" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
+          </div>
+          <div class="video-info-block">
+            <h4 class="video-title">Luxury Living Room Design Details</h4>
+            <p class="video-desc">Stepping close to examine the marble textures, custom gold metallic trims, and modern geometry that define this lounge.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- STATS -->
   <div class="stats reveal">
     <div class="stats-inner">
@@ -1071,8 +1227,9 @@
       <div class="footer-col">
         <h4>Navigate</h4>
         <a href="#">Home</a>
-        <a href="#categories">Our Work</a>
+        <a href="#categories">Categories</a>
         <a href="#projects">Projects</a>
+        <a href="#gallery">Gallery</a>
         <a href="#contact">Contact</a>
       </div>
       <div class="footer-col">
@@ -1212,7 +1369,7 @@
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
     // Active nav link
-    const sections = ['hero','categories','projects','contact'];
+    const sections = ['hero','categories','projects','gallery','contact'];
     const navLinks  = document.querySelectorAll('.nav-links a');
     window.addEventListener('scroll', () => {
       let cur = 'hero';
@@ -1622,6 +1779,53 @@
 
     // Initialize Grid layout on load
     updateProjectsGrid();
+
+    // Hero background image rotation logic
+    const heroMediaSide = document.getElementById('heroMediaSide');
+    // Extract unique project image paths from projectsData database
+    const heroImages = [...new Set(projectsData.map(p => p.image))];
+
+    // Create dual-slide crossfading layer elements
+    const slide1 = document.createElement('div');
+    slide1.className = 'hero-slide active kenBurnsUp';
+    slide1.style.backgroundImage = `url('${heroImages[0]}')`;
+
+    const slide2 = document.createElement('div');
+    slide2.className = 'hero-slide';
+
+    // Insert slides before the gradient overlay inside #heroMediaSide
+    heroMediaSide.insertBefore(slide1, heroMediaSide.firstChild);
+    heroMediaSide.insertBefore(slide2, heroMediaSide.firstChild);
+
+    let currentSlide = slide1;
+    let currentImageIndex = 0;
+
+    function rotateHeroBg() {
+      // Pick a random image different from current
+      let nextIndex = currentImageIndex;
+      while (nextIndex === currentImageIndex && heroImages.length > 1) {
+        nextIndex = Math.floor(Math.random() * heroImages.length);
+      }
+      currentImageIndex = nextIndex;
+      const nextImageUrl = heroImages[currentImageIndex];
+
+      const nextSlide = (currentSlide === slide1) ? slide2 : slide1;
+
+      // Assign the background image
+      nextSlide.style.backgroundImage = `url('${nextImageUrl}')`;
+
+      // Randomize Ken Burns transition direction for organic variety
+      const directions = ['kenBurnsUp', 'kenBurnsDown', 'kenBurnsRight', 'kenBurnsLeft'];
+      const randomDir = directions[Math.floor(Math.random() * directions.length)];
+
+      nextSlide.className = `hero-slide active ${randomDir}`;
+      currentSlide.classList.remove('active');
+
+      currentSlide = nextSlide;
+    }
+
+    // Rotate every 3 seconds
+    setInterval(rotateHeroBg, 3000);
   </script>
 
 </body>
