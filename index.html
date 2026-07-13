@@ -86,9 +86,20 @@
       border-bottom: 1px solid rgba(201, 168, 76, 0.15);
     }
 
-    .nav-logo { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; cursor: pointer; }
-    .nav-logo-name { font-family: 'Archivo Black', sans-serif; font-size: 1.25rem; letter-spacing: 0.18em; color: var(--white); line-height: 1; }
-    .nav-logo-sub { font-size: 0.55rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--primary); line-height: 1; }
+    .nav-logo { display: flex; align-items: center; cursor: pointer; gap: 12px; }
+    .logo-img {
+      height: 46px; width: auto; object-fit: contain; display: block;
+      border-radius: 4px;
+      transition: transform 0.3s ease, height 0.3s ease;
+    }
+    .nav-logo:hover .logo-img {
+      transform: scale(1.03);
+    }
+    .logo-text-group {
+      display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+    }
+    .nav-logo-name { font-family: 'Archivo Black', sans-serif; font-size: 1.15rem; letter-spacing: 0.15em; color: var(--white); line-height: 1; }
+    .nav-logo-sub { font-size: 0.52rem; letter-spacing: 0.32em; text-transform: uppercase; color: var(--primary); line-height: 1; }
 
     .nav-links { display: flex; gap: 2rem; align-items: center; }
     .nav-links a { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--steel); transition: color 0.2s; }
@@ -97,6 +108,27 @@
     .nav-right { display: flex; align-items: center; gap: 1rem; }
 
     .menu-toggle { display: none; background: none; border: none; color: var(--steel); cursor: pointer; padding: 4px; }
+
+    /* ── FILTER TABS ────────────────────────────────── */
+    .filter-tabs {
+      display: flex; justify-content: center; gap: 0.75rem;
+      margin-bottom: 3rem; flex-wrap: wrap;
+    }
+    .filter-btn {
+      background: transparent; color: var(--steel);
+      border: 1px solid var(--border); border-radius: 4px;
+      padding: 0.6rem 1.5rem; font-size: 0.72rem;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      font-family: 'Inter', sans-serif; font-weight: 500;
+      cursor: pointer; transition: all 0.3s ease;
+    }
+    .filter-btn:hover {
+      border-color: rgba(201, 168, 76, 0.4); color: var(--white);
+    }
+    .filter-btn.active {
+      background: var(--primary); color: #08080A; border-color: var(--primary);
+      box-shadow: 0 4px 15px rgba(201, 168, 76, 0.2);
+    }
 
     /* ── THEME SWITCH ────────────────────────────────── */
     .theme-switch {
@@ -239,6 +271,26 @@
     }
     .btn-outline-primary:hover { background: rgba(201,168,76,0.08); transform: translateY(-1px); }
 
+    /* Light Theme Button Contrast Overrides */
+    html.light-theme .btn-outline-primary {
+      color: #66501A;
+      border-color: rgba(102, 80, 26, 0.45);
+    }
+    html.light-theme .btn-outline-primary:hover {
+      background: rgba(102, 80, 26, 0.08);
+      color: #4D3C12;
+      border-color: rgba(102, 80, 26, 0.65);
+    }
+    html.light-theme .nav-contact-btn {
+      color: #66501A;
+      border-color: rgba(102, 80, 26, 0.45);
+    }
+    html.light-theme .nav-contact-btn:hover {
+      background: rgba(102, 80, 26, 0.08);
+      color: #4D3C12;
+      border-color: rgba(102, 80, 26, 0.65);
+    }
+
     /* â”€â”€ SCROLL REVEAL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
     .reveal.active { opacity: 1; transform: translateY(0); }
@@ -334,6 +386,138 @@
     }
     .proj-card:hover .proj-cta { opacity: 1; transform: translateY(0); }
 
+    .proj-card.hidden-project { display: none; }
+    .proj-card.hidden-project.show { display: block; animation: fadeSlideUp 0.6s ease both; }
+
+    /* ── PROJECT DETAILS MODAL ──────────────────────── */
+    .project-modal {
+      position: fixed; inset: 0; z-index: 1000;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.4s ease;
+      padding: 1.5rem;
+    }
+    .project-modal.active {
+      opacity: 1; pointer-events: all;
+    }
+    .modal-overlay {
+      position: absolute; inset: 0;
+      background: rgba(8, 8, 10, 0.75);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .modal-container {
+      position: relative; z-index: 1002;
+      width: 100%; max-width: 1000px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px; overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      transform: scale(0.92);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .project-modal.active .modal-container {
+      transform: scale(1);
+    }
+    .modal-close-btn {
+      position: absolute; top: 1.25rem; right: 1.25rem; z-index: 1010;
+      background: rgba(8, 8, 10, 0.6); border: 1px solid var(--border);
+      color: var(--white); width: 36px; height: 36px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .modal-close-btn:hover {
+      background: var(--primary); color: #08080A; border-color: var(--primary);
+    }
+    .modal-content {
+      display: grid; grid-template-columns: 1.2fr 1fr; min-height: 520px;
+    }
+    .modal-media-side {
+      position: relative; background: #000; overflow: hidden; display: flex; align-items: center; justify-content: center;
+    }
+    .modal-media-side img {
+      width: 100%; height: 100%; object-fit: cover; aspect-ratio: 4/5;
+    }
+    .nav-arrow {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      background: rgba(8, 8, 10, 0.6); border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff; width: 44px; height: 44px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all 0.2s; z-index: 1005;
+    }
+    .nav-arrow:hover {
+      background: var(--primary); color: #08080A; border-color: var(--primary);
+    }
+    .prev-arrow { left: 1rem; }
+    .next-arrow { right: 1rem; }
+    
+    .modal-info-side {
+      padding: 2.5rem; display: flex; flex-direction: column; justify-content: space-between;
+      border-left: 1px solid var(--border);
+    }
+    .modal-cat {
+      color: var(--primary); font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; display: block; margin-bottom: 0.5rem;
+    }
+    .modal-name {
+      font-size: 1.75rem; color: var(--white); margin-bottom: 1rem; line-height: 1.2; font-family: 'Archivo Black', sans-serif;
+    }
+    .modal-desc {
+      color: var(--steel); font-size: 0.88rem; line-height: 1.65; margin-bottom: 2rem;
+    }
+    .modal-specs {
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      padding: 1.5rem 0; margin-bottom: 2rem; display: grid; gap: 0.85rem;
+    }
+    .spec-item {
+      display: flex; justify-content: space-between; font-size: 0.8rem;
+    }
+    .spec-label {
+      color: var(--steel); text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.72rem;
+    }
+    .spec-value {
+      color: var(--white); font-weight: 500; text-align: right; max-width: 60%;
+    }
+
+    body.modal-open {
+      overflow: hidden;
+    }
+
+    /* Light Theme Adjustments for Modal */
+    html.light-theme .modal-close-btn {
+      background: rgba(245, 245, 247, 0.8); color: var(--white);
+    }
+    html.light-theme .nav-arrow {
+      background: rgba(245, 245, 247, 0.8); color: var(--white);
+    }
+    html.light-theme .nav-arrow:hover, html.light-theme .modal-close-btn:hover {
+      background: var(--primary); color: #08080A;
+    }
+
+    /* Mobile Responsive for Modal */
+    @media (max-width: 768px) {
+      .project-modal {
+        padding: 0.75rem;
+      }
+      .modal-container {
+        max-height: 90vh; overflow-y: auto;
+      }
+      .modal-content {
+        grid-template-columns: 1fr;
+      }
+      .modal-media-side img {
+        aspect-ratio: 16/10;
+      }
+      .modal-info-side {
+        padding: 1.75rem; border-left: none; border-top: 1px solid var(--border);
+      }
+      .modal-name { font-size: 1.4rem; }
+      .modal-desc { margin-bottom: 1.5rem; }
+      .modal-specs { padding: 1rem 0; margin-bottom: 1.5rem; }
+      .modal-close-btn {
+        top: 0.75rem; right: 0.75rem;
+      }
+    }
+
     /* â”€â”€ CTA SECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .cta-section { padding: 7rem 2.5rem; text-align: center; position: relative; overflow: hidden; }
     .cta-glow {
@@ -357,9 +541,9 @@
     /* â”€â”€ FOOTER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     footer { background: var(--bg); border-top: 1px solid rgba(201,168,76,0.05); padding: 4.5rem 2.5rem 2rem; }
     .footer-inner { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 3rem; }
-    .footer-logo-block { margin-bottom: 1rem; }
-    .footer-logo-name { font-family: 'Archivo Black', sans-serif; font-size: 1.2rem; letter-spacing: 0.18em; color: var(--white); }
-    .footer-logo-sub { font-size: 0.52rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--primary); display: block; margin-top: 2px; }
+    .footer-logo-block { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; }
+    .footer-logo-name { font-family: 'Archivo Black', sans-serif; font-size: 1.15rem; letter-spacing: 0.15em; color: var(--white); line-height: 1; }
+    .footer-logo-sub { font-size: 0.52rem; letter-spacing: 0.32em; text-transform: uppercase; color: var(--primary); display: block; line-height: 1; }
     .footer-brand p { color: var(--steel); font-size: 0.85rem; line-height: 1.65; margin-top: 0.75rem; }
     .footer-col h4 { color: var(--white); font-size: 0.58rem; letter-spacing: 0.28em; text-transform: uppercase; margin-bottom: 1.25rem; font-family: 'Inter', sans-serif; font-weight: 600; }
     .footer-col a { display: block; color: var(--steel); font-size: 0.85rem; margin-bottom: 0.75rem; transition: color 0.2s; }
@@ -383,6 +567,7 @@
       .footer-inner { grid-template-columns: 1fr 1fr; gap: 2rem; }
     }
     @media (max-width: 768px) {
+      .logo-img { height: 36px; }
       .nav-links { display: none; }
       .nav-contact-btn { display: none; }
       .menu-toggle { display: flex; }
@@ -396,6 +581,8 @@
     }
     @media (max-width: 480px) {
       nav { padding: 0 1.5rem; }
+      .nav-logo-name { font-size: 0.95rem; }
+      .nav-logo-sub { font-size: 0.45rem; }
       .categories, .featured, .cta-section, .stats { padding-left: 1.5rem; padding-right: 1.5rem; }
       footer { padding-left: 1.5rem; padding-right: 1.5rem; }
       .cat-grid { grid-template-columns: 1fr; }
@@ -410,12 +597,15 @@
   <!-- NAVBAR -->
   <nav id="navbar">
     <a href="#" class="nav-logo" id="nav-logo">
-      <span class="nav-logo-name">MA INTERIOR</span>
-      <span class="nav-logo-sub">Design Studio</span>
+      <img src="pictures/logo.jpeg" class="logo-img" alt="MA INTERIOR">
+      <div class="logo-text-group">
+        <span class="nav-logo-name">MA INTERIOR</span>
+        <span class="nav-logo-sub">Design Studio</span>
+      </div>
     </a>
     <div class="nav-links">
       <a href="#" class="active">Home</a>
-      <a href="#categories">Our Work</a>
+      <a href="#categories">Categories</a>
       <a href="#projects">Projects</a>
       <a href="#contact">Contact</a>
     </div>
@@ -456,7 +646,7 @@
   <div class="mobile-menu" id="mobileMenu">
     <div class="mobile-links">
       <a href="#"           class="mobile-link" onclick="closeMobileMenu()">Home</a>
-      <a href="#categories" class="mobile-link" onclick="closeMobileMenu()">Our Work</a>
+      <a href="#categories" class="mobile-link" onclick="closeMobileMenu()">Categories</a>
       <a href="#projects"   class="mobile-link" onclick="closeMobileMenu()">Projects</a>
       <a href="#contact"    class="mobile-link" onclick="closeMobileMenu()">Contact</a>
     </div>
@@ -501,13 +691,13 @@
     <div class="categories-inner">
       <div class="section-heading">
         <span class="section-eyebrow">Our Expertise</span>
-        <h2>Curated Spaces</h2>
+        <h2>Curated Categories</h2>
         <p>Four pillars of design excellence &mdash; each space crafted with uncompromising attention to detail and aesthetic purpose.</p>
         <div class="divider"></div>
       </div>
       <div class="cat-grid">
 
-        <div class="cat-card">
+        <div class="cat-card" data-category="living">
           <img src="pictures/10.jpeg" class="cat-ph" alt="Living Room" style="object-fit:cover;">
           <div class="cat-pattern"></div>
           <div class="cat-overlay"></div>
@@ -519,7 +709,7 @@
           </div>
         </div>
 
-        <div class="cat-card">
+        <div class="cat-card" data-category="bedroom">
           <img src="pictures/9.jpeg" class="cat-ph" alt="Bedroom" style="object-fit:cover;">
           <div class="cat-pattern"></div>
           <div class="cat-overlay"></div>
@@ -531,7 +721,7 @@
           </div>
         </div>
 
-        <div class="cat-card">
+        <div class="cat-card" data-category="kitchen">
           <img src="pictures/13.jpeg" class="cat-ph" alt="Kitchen & Dining" style="object-fit:cover;">
           <div class="cat-pattern"></div>
           <div class="cat-overlay"></div>
@@ -543,7 +733,7 @@
           </div>
         </div>
 
-        <div class="cat-card">
+        <div class="cat-card" data-category="office">
           <img src="pictures/14.jpeg" class="cat-ph" alt="Home Office" style="object-fit:cover;">
           <div class="cat-pattern"></div>
           <div class="cat-overlay"></div>
@@ -563,16 +753,27 @@
   <section class="featured reveal" id="projects">
     <div class="featured-inner">
       <div class="section-heading">
-        <span class="section-eyebrow">Handpicked</span>
+        <span class="section-eyebrow">SELECTED WORKS</span>
         <h2>Featured Projects</h2>
         <p>A curated selection of our finest work &mdash; each project a testament to our passion for extraordinary design.</p>
         <div class="divider"></div>
       </div>
+
+      <!-- Category Filter Tabs -->
+      <div class="filter-tabs" id="filterTabs">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="living">Living Room</button>
+        <button class="filter-btn" data-filter="bedroom">Bedroom</button>
+        <button class="filter-btn" data-filter="kitchen">Kitchen &amp; Dining</button>
+        <button class="filter-btn" data-filter="office">Home Office</button>
+      </div>
+
       <div class="proj-grid">
 
-        <div class="proj-card">
+        <!-- Card 1: 8.jpeg -->
+        <div class="proj-card" data-index="0" data-category="living">
           <div class="proj-img-wrap">
-            <img src="pictures/8.jpeg" style="width:100%;height:100%;object-fit:cover;" alt="Project">
+            <img src="pictures/8.jpeg" style="width:100%;height:100%;object-fit:cover;" alt="The Meridian Residence">
             <div class="proj-img-overlay"></div>
             <div class="proj-info">
               <span class="proj-cat">Living Room &middot; Gulshan, Dhaka</span>
@@ -583,9 +784,10 @@
           </div>
         </div>
 
-        <div class="proj-card">
+        <!-- Card 2: 11.jpeg -->
+        <div class="proj-card" data-index="1" data-category="bedroom">
           <div class="proj-img-wrap">
-            <img src="pictures/11.jpeg" style="width:100%;height:100%;object-fit:cover;" alt="Project">
+            <img src="pictures/11.jpeg" style="width:100%;height:100%;object-fit:cover;" alt="Serene Suite">
             <div class="proj-img-overlay"></div>
             <div class="proj-info">
               <span class="proj-cat">Bedroom &middot; Banani, Dhaka</span>
@@ -596,9 +798,10 @@
           </div>
         </div>
 
-        <div class="proj-card">
+        <!-- Card 3: 7.jpeg -->
+        <div class="proj-card" data-index="2" data-category="kitchen">
           <div class="proj-img-wrap">
-            <img src="pictures/7.jpeg" style="width:100%;height:100%;object-fit:cover;" alt="Project">
+            <img src="pictures/7.jpeg" style="width:100%;height:100%;object-fit:cover;" alt="Noir Kitchen Studio">
             <div class="proj-img-overlay"></div>
             <div class="proj-info">
               <span class="proj-cat">Kitchen &middot; Dhanmondi, Dhaka</span>
@@ -609,9 +812,225 @@
           </div>
         </div>
 
+        <!-- Card 4: 1.jpeg -->
+        <div class="proj-card" data-index="3" data-category="kitchen">
+          <div class="proj-img-wrap">
+            <img src="pictures/1.jpeg" style="width:100%;height:100%;object-fit:cover;" alt="The Emerald Oasis">
+            <div class="proj-img-overlay"></div>
+            <div class="proj-info">
+              <span class="proj-cat">Dining Room &middot; Banani, Dhaka</span>
+              <h3 class="proj-name">The Emerald Oasis</h3>
+              <p class="proj-desc">A luxurious dining space with emerald accents and natural light.</p>
+              <div class="proj-cta">View Project <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 5: 2.jpeg -->
+        <div class="proj-card" data-index="4" data-category="living">
+          <div class="proj-img-wrap">
+            <img src="pictures/2.jpeg" style="width:100%;height:100%;object-fit:cover;" alt="Monochrome Lounge">
+            <div class="proj-img-overlay"></div>
+            <div class="proj-info">
+              <span class="proj-cat">Living Room &middot; Gulshan, Dhaka</span>
+              <h3 class="proj-name">Monochrome Lounge</h3>
+              <p class="proj-desc">Modern contrast styling with sleek ambient light.</p>
+              <div class="proj-cta">View Project <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 6: 3.jpeg -->
+        <div class="proj-card" data-index="5" data-category="living">
+          <div class="proj-img-wrap">
+            <img src="pictures/3.jpeg" style="width:100%;height:100%;object-fit:cover;" alt="Nordic Comfort">
+            <div class="proj-img-overlay"></div>
+            <div class="proj-info">
+              <span class="proj-cat">Living Room &middot; Dhanmondi, Dhaka</span>
+              <h3 class="proj-name">Nordic Comfort</h3>
+              <p class="proj-desc">Cozy Scandinavian lounge with clean wood accents.</p>
+              <div class="proj-cta">View Project <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 7: 4.jpeg (Hidden) -->
+        <div class="proj-card hidden-project" data-index="6" data-category="office">
+          <div class="proj-img-wrap">
+            <img src="pictures/4.jpeg" style="width:100%;height:100%;object-fit:cover;" alt="The Executive Suite">
+            <div class="proj-img-overlay"></div>
+            <div class="proj-info">
+              <span class="proj-cat">Home Office &middot; Baridhara, Dhaka</span>
+              <h3 class="proj-name">The Executive Suite</h3>
+              <p class="proj-desc">Modern workspace with rich wood paneling.</p>
+              <div class="proj-cta">View Project <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 8: 5.jpeg (Hidden) -->
+        <div class="proj-card hidden-project" data-index="7" data-category="bedroom">
+          <div class="proj-img-wrap">
+            <img src="pictures/5.jpeg" style="width:100%;height:100%;object-fit:cover;" alt="Chic Sanctuary">
+            <div class="proj-img-overlay"></div>
+            <div class="proj-info">
+              <span class="proj-cat">Bedroom &middot; Uttara, Dhaka</span>
+              <h3 class="proj-name">Chic Sanctuary</h3>
+              <p class="proj-desc">Soft tones and custom fixtures for peaceful rest.</p>
+              <div class="proj-cta">View Project <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 9: 6.jpeg (Hidden) -->
+        <div class="proj-card hidden-project" data-index="8" data-category="living">
+          <div class="proj-img-wrap">
+            <img src="pictures/6.jpeg" style="width:100%;height:100%;object-fit:cover;" alt="The Obsidian Loft">
+            <div class="proj-img-overlay"></div>
+            <div class="proj-info">
+              <span class="proj-cat">Lounge &middot; Gulshan, Dhaka</span>
+              <h3 class="proj-name">The Obsidian Loft</h3>
+              <p class="proj-desc">A high-ceiling premium lounge space with dark tones.</p>
+              <div class="proj-cta">View Project <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 10: 9.jpeg (Hidden) -->
+        <div class="proj-card hidden-project" data-index="9" data-category="bedroom">
+          <div class="proj-img-wrap">
+            <img src="pictures/9.jpeg" style="width:100%;height:100%;object-fit:cover;" alt="Serene Sanctuary">
+            <div class="proj-img-overlay"></div>
+            <div class="proj-info">
+              <span class="proj-cat">Bedroom &middot; Banani, Dhaka</span>
+              <h3 class="proj-name">Serene Sanctuary</h3>
+              <p class="proj-desc">Minimalist room with beautifully textured back wall.</p>
+              <div class="proj-cta">View Project <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 11: 10.jpeg (Hidden) -->
+        <div class="proj-card hidden-project" data-index="10" data-category="living">
+          <div class="proj-img-wrap">
+            <img src="pictures/10.jpeg" style="width:100%;height:100%;object-fit:cover;" alt="Grand Vista Living">
+            <div class="proj-img-overlay"></div>
+            <div class="proj-info">
+              <span class="proj-cat">Living Room &middot; Baridhara, Dhaka</span>
+              <h3 class="proj-name">Grand Vista Living</h3>
+              <p class="proj-desc">Open plan layout with expansive floor-to-ceiling windows.</p>
+              <div class="proj-cta">View Project <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 12: 12.jpeg (Hidden) -->
+        <div class="proj-card hidden-project" data-index="11" data-category="office">
+          <div class="proj-img-wrap">
+            <img src="pictures/12.jpeg" style="width:100%;height:100%;object-fit:cover;" alt="Bespoke Study">
+            <div class="proj-img-overlay"></div>
+            <div class="proj-info">
+              <span class="proj-cat">Home Office &middot; Mirpur, Dhaka</span>
+              <h3 class="proj-name">Bespoke Study</h3>
+              <p class="proj-desc">Clever built-in shelves and space-optimizing layout.</p>
+              <div class="proj-cta">View Project <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 13: 13.jpeg (Hidden) -->
+        <div class="proj-card hidden-project" data-index="12" data-category="kitchen">
+          <div class="proj-img-wrap">
+            <img src="pictures/13.jpeg" style="width:100%;height:100%;object-fit:cover;" alt="Urban Culinary">
+            <div class="proj-img-overlay"></div>
+            <div class="proj-info">
+              <span class="proj-cat">Kitchen &middot; Bashundhara, Dhaka</span>
+              <h3 class="proj-name">Urban Culinary</h3>
+              <p class="proj-desc">Large marble island with premium smart-appliance integration.</p>
+              <div class="proj-cta">View Project <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 14: 14.jpeg (Hidden) -->
+        <div class="proj-card hidden-project" data-index="13" data-category="office">
+          <div class="proj-img-wrap">
+            <img src="pictures/14.jpeg" style="width:100%;height:100%;object-fit:cover;" alt="The Creative Den">
+            <div class="proj-img-overlay"></div>
+            <div class="proj-info">
+              <span class="proj-cat">Home Office &middot; Gulshan, Dhaka</span>
+              <h3 class="proj-name">The Creative Den</h3>
+              <p class="proj-desc">Designed for modern ergonomics and creative workflow.</p>
+              <div class="proj-cta">View Project <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 15: 15.jpeg (Hidden) -->
+        <div class="proj-card hidden-project" data-index="14" data-category="living">
+          <div class="proj-img-wrap">
+            <img src="pictures/15.jpeg" style="width:100%;height:100%;object-fit:cover;" alt="Terracotta Lounge">
+            <div class="proj-img-overlay"></div>
+            <div class="proj-info">
+              <span class="proj-cat">Lounge &middot; Wari, Dhaka</span>
+              <h3 class="proj-name">Terracotta Lounge</h3>
+              <p class="proj-desc">Charming reading space with custom brickwork accent.</p>
+              <div class="proj-cta">View Project <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 16: 16.jpeg (Hidden) -->
+        <div class="proj-card hidden-project" data-index="15" data-category="bedroom">
+          <div class="proj-img-wrap">
+            <img src="pictures/16.jpeg" style="width:100%;height:100%;object-fit:cover;" alt="Zen Bathroom">
+            <div class="proj-img-overlay"></div>
+            <div class="proj-info">
+              <span class="proj-cat">Bathroom &middot; Banani, Dhaka</span>
+              <h3 class="proj-name">Zen Bathroom</h3>
+              <p class="proj-desc">Premium marble walls and freestanding tub for deep relaxation.</p>
+              <div class="proj-cta">View Project <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 17: 17.jpeg (Hidden) -->
+        <div class="proj-card hidden-project" data-index="16" data-category="living">
+          <div class="proj-img-wrap">
+            <img src="pictures/17.jpeg" style="width:100%;height:100%;object-fit:cover;" alt="Veranda Escape">
+            <div class="proj-img-overlay"></div>
+            <div class="proj-info">
+              <span class="proj-cat">Balcony &middot; Dhanmondi, Dhaka</span>
+              <h3 class="proj-name">Veranda Escape</h3>
+              <p class="proj-desc">Indoor-outdoor patio balcony styling with premium materials.</p>
+              <div class="proj-cta">View Project <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Show All Projects Button -->
+      <div style="text-align: center; margin-top: 3.5rem;">
+        <button id="toggleProjectsBtn" class="btn-outline-primary" style="padding: 1rem 2.5rem;">
+          Show All Projects
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 4px;">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </button>
       </div>
     </div>
   </section>
+
+  <!-- STATS -->
+  <div class="stats reveal">
+    <div class="stats-inner">
+      <div class="stat"><span class="stat-value">200+</span><span class="stat-label">Projects Completed</span></div>
+      <div class="stat"><span class="stat-value">5+</span><span class="stat-label">Years Experience</span></div>
+      <div class="stat"><span class="stat-value">500+</span><span class="stat-label">Happy Clients</span></div>
+      <div class="stat"><span class="stat-value">50+</span><span class="stat-label">Design Experts</span></div>
+    </div>
+  </div>
 
   <!-- CTA SECTION -->
   <section class="cta-section reveal" id="contact">
@@ -636,23 +1055,16 @@
     </div>
   </section>
 
-  <!-- STATS -->
-  <div class="stats reveal">
-    <div class="stats-inner">
-      <div class="stat"><span class="stat-value">200+</span><span class="stat-label">Projects Completed</span></div>
-      <div class="stat"><span class="stat-value">5+</span><span class="stat-label">Years Experience</span></div>
-      <div class="stat"><span class="stat-value">500+</span><span class="stat-label">Happy Clients</span></div>
-      <div class="stat"><span class="stat-value">50+</span><span class="stat-label">Design Experts</span></div>
-    </div>
-  </div>
-
   <!-- FOOTER -->
   <footer>
     <div class="footer-inner">
       <div class="footer-brand">
         <div class="footer-logo-block">
-          <div class="footer-logo-name">MA INTERIOR</div>
-          <span class="footer-logo-sub">Design Studio</span>
+          <img src="pictures/logo.jpeg" class="logo-img" alt="MA INTERIOR">
+          <div class="logo-text-group">
+            <span class="footer-logo-name">MA INTERIOR</span>
+            <span class="footer-logo-sub">Design Studio</span>
+          </div>
         </div>
         <p>Premium interior design solutions for homeowners, architects, and developers who demand excellence in every detail.</p>
       </div>
@@ -695,6 +1107,64 @@
       </div>
     </div>
   </footer>
+
+  <!-- PROJECT DETAILS MODAL -->
+  <div id="projectModal" class="project-modal" aria-hidden="true">
+    <div class="modal-overlay" id="modalOverlay"></div>
+    <div class="modal-container">
+      <button class="modal-close-btn" id="modalCloseBtn" aria-label="Close modal">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div class="modal-content">
+        <!-- Image Area -->
+        <div class="modal-media-side">
+          <img id="modalImg" src="" alt="Project Image">
+          <!-- Navigation Arrows inside Media Area -->
+          <button class="nav-arrow prev-arrow" id="modalPrevBtn" aria-label="Previous project">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <button class="nav-arrow next-arrow" id="modalNextBtn" aria-label="Next project">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+        <!-- Details Area -->
+        <div class="modal-info-side">
+          <div>
+            <span id="modalCat" class="modal-cat">CATEGORY</span>
+            <h3 id="modalName" class="modal-name">Project Name</h3>
+            <p id="modalDesc" class="modal-desc">Detailed project description goes here.</p>
+            
+            <div class="modal-specs">
+              <div class="spec-item">
+                <span class="spec-label">Style</span>
+                <span id="modalSpecStyle" class="spec-value">-</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Area Size</span>
+                <span id="modalSpecArea" class="spec-value">-</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Year</span>
+                <span id="modalSpecYear" class="spec-value">-</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Materials</span>
+                <span id="modalSpecMaterials" class="spec-value">-</span>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer-cta">
+            <button id="modalInquireBtn" class="btn-primary" style="width: 100%; justify-content: center;">
+              Inquire About This Design
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 4px;">
+                <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- JAVASCRIPT -->
   <script>
@@ -756,6 +1226,402 @@
         if (h === '#' + cur || (cur === 'hero' && h === '#')) lnk.classList.add('active');
       });
     });
+
+    // Projects database
+    const projectsData = [
+      {
+        image: 'pictures/8.jpeg',
+        category: 'Living Room · Gulshan, Dhaka',
+        catCode: 'living',
+        name: 'The Meridian Residence',
+        desc: 'A seamless blend of warm earth tones, low-slung seating, and custom modern geometry. Built to foster deep relaxation while exuding effortless grandeur.',
+        style: 'Modern Contemporary',
+        area: '2,400 sq ft',
+        year: '2025',
+        materials: 'American Oak, Italian Marble, Antique Brass Accents'
+      },
+      {
+        image: 'pictures/11.jpeg',
+        category: 'Bedroom · Banani, Dhaka',
+        catCode: 'bedroom',
+        name: 'Serene Suite',
+        desc: 'Minimalist luxury crafted for rest and rejuvenation. Features organic textures, custom upholstered frame, and layered warm backlight panels.',
+        style: 'Warm Minimalism',
+        area: '650 sq ft',
+        year: '2025',
+        materials: 'Oak Wood Paneling, Flaxen Linen, Integrated Ambient LED'
+      },
+      {
+        image: 'pictures/7.jpeg',
+        category: 'Kitchen · Dhanmondi, Dhaka',
+        catCode: 'kitchen',
+        name: 'Noir Kitchen Studio',
+        desc: 'Dark matte cabinetry meets brushed brass elegance. Designed for open functionality, blending premium German appliances into custom panels.',
+        style: 'Modern Industrial',
+        area: '380 sq ft',
+        year: '2024',
+        materials: 'Matte Black Acrylic, Calacatta Quartzite, Brushed Brass Hardware'
+      },
+      {
+        image: 'pictures/1.jpeg',
+        category: 'Dining Room · Banani, Dhaka',
+        catCode: 'kitchen',
+        name: 'The Emerald Oasis',
+        desc: 'A magnificent luxury dining setting styled with deep emerald velvet, custom golden details, and an imposing natural marble dining table.',
+        style: 'Luxury Transitional',
+        area: '450 sq ft',
+        year: '2025',
+        materials: 'Emerald Velvet, Crema Marfil Slab Table, Crystal Chandelier'
+      },
+      {
+        image: 'pictures/2.jpeg',
+        category: 'Living Room · Gulshan, Dhaka',
+        catCode: 'living',
+        name: 'Monochrome Lounge',
+        desc: 'Bold contrasting colors and sleek lines create a sophisticated urban living area. Hidden lighting highlights the pristine architectural features.',
+        style: 'Minimalist Modern',
+        area: '1,800 sq ft',
+        year: '2024',
+        materials: 'Polished Terrazzo Flooring, Matte Black Lacquer, Nappa Leather'
+      },
+      {
+        image: 'pictures/3.jpeg',
+        category: 'Living Room · Dhanmondi, Dhaka',
+        catCode: 'living',
+        name: 'Nordic Comfort',
+        desc: 'Cozy Scandinavian-Japandi fusion lounge space. Hand-selected organic fabrics and light tone wood elements provide natural warmth.',
+        style: 'Japandi / Scandinavian',
+        area: '1,200 sq ft',
+        year: '2024',
+        materials: 'Solid Birch Wood, Bouclé Weave, Premium Wool Rug'
+      },
+      {
+        image: 'pictures/4.jpeg',
+        category: 'Home Office · Baridhara, Dhaka',
+        catCode: 'office',
+        name: 'The Executive Suite',
+        desc: 'A stately private study designed to inspire high focus. Rich wood grain paneling matches hand-finished executive leather details.',
+        style: 'Corporate Luxury',
+        area: '320 sq ft',
+        year: '2025',
+        materials: 'Select Walnut Wood, Hand-stitched Cognac Leather, Bronze Trim'
+      },
+      {
+        image: 'pictures/5.jpeg',
+        category: 'Bedroom · Uttara, Dhaka',
+        catCode: 'bedroom',
+        name: 'Chic Sanctuary',
+        desc: 'Soft pastel hues, custom gold-accented bedside lamps, and a custom quilted bed frame create an inviting and relaxing personal sanctuary.',
+        style: 'Modern Transitional',
+        area: '520 sq ft',
+        year: '2025',
+        materials: 'Upholstered Velvet Bed, Brushed Brass Sconces, Natural Ash Flooring'
+      },
+      {
+        image: 'pictures/6.jpeg',
+        category: 'Lounge · Gulshan, Dhaka',
+        catCode: 'living',
+        name: 'The Obsidian Loft',
+        desc: 'A grand high-ceiling penthouse lounge featuring double-height glass panels, deep charcoal walls, and luxurious minimalist sofas.',
+        style: 'Industrial Loft Style',
+        area: '3,100 sq ft',
+        year: '2025',
+        materials: 'Powder-coated Steel, Smoked Oak Planks, Matte Charcoal Porcelain'
+      },
+      {
+        image: 'pictures/9.jpeg',
+        category: 'Bedroom · Banani, Dhaka',
+        catCode: 'bedroom',
+        name: 'Serene Sanctuary',
+        desc: 'Calm Zen-like bedroom space highlighted by an authentic textured clay plaster accent wall and low-profile floating platform bed.',
+        style: 'Japandi',
+        area: '480 sq ft',
+        year: '2024',
+        materials: 'Clay Plaster Accent, Bamboo Elements, Ash Wood Platform Bed'
+      },
+      {
+        image: 'pictures/10.jpeg',
+        category: 'Living Room · Baridhara, Dhaka',
+        catCode: 'living',
+        name: 'Grand Vista Living',
+        desc: 'Expansive open plan living room designed to maximize natural light and panoramic views. Clean marble floors offer timeless grandeur.',
+        style: 'Ultra Luxury Modern',
+        area: '3,500 sq ft',
+        year: '2026',
+        materials: 'Statuario Marble, Extra-Clear Glass Panels, Low-profile Italian Sectional'
+      },
+      {
+        image: 'pictures/12.jpeg',
+        category: 'Home Office · Mirpur, Dhaka',
+        catCode: 'office',
+        name: 'Bespoke Study',
+        desc: 'Ingenious space-saving desk design combined with floor-to-ceiling customized shelves, ideal for study, work, and display.',
+        style: 'Compact Functionalism',
+        area: '220 sq ft',
+        year: '2024',
+        materials: 'High-density Fiberboard, Matte Laminate, Powder-coated Steel Frame'
+      },
+      {
+        image: 'pictures/13.jpeg',
+        category: 'Kitchen · Bashundhara, Dhaka',
+        catCode: 'kitchen',
+        name: 'Urban Culinary',
+        desc: 'Professional grade kitchen featuring a majestic marble breakfast island, custom ceiling hood, and integrated high-end kitchen tech.',
+        style: 'High-Tech Modern Kitchen',
+        area: '420 sq ft',
+        year: '2025',
+        materials: 'Brushed Stainless Steel, Carrara Slab Island, Touch-open Cabinets'
+      },
+      {
+        image: 'pictures/14.jpeg',
+        category: 'Home Office · Gulshan, Dhaka',
+        catCode: 'office',
+        name: 'The Creative Den',
+        desc: 'Designed for a graphic artist, incorporating acoustic soundproofing, ergonomic sit-stand desk, and personalized shelf layouts.',
+        style: 'Sleek Minimalist Office',
+        area: '280 sq ft',
+        year: '2025',
+        materials: 'Anodized Aluminum Desktop, Ash Veneer Desk, Acoustic Felt Panels'
+      },
+      {
+        image: 'pictures/15.jpeg',
+        category: 'Lounge · Wari, Dhaka',
+        catCode: 'living',
+        name: 'Terracotta Lounge',
+        desc: 'Warm and rustic reading room featuring an authentic exposed red-brick wall, hand-crafted teakwood seats, and indoor climbing plants.',
+        style: 'Rustic Transitional',
+        area: '600 sq ft',
+        year: '2024',
+        materials: 'Exposed Terracotta Bricks, Wrought Iron Frame, Solid Teakwood'
+      },
+      {
+        image: 'pictures/16.jpeg',
+        category: 'Bathroom · Banani, Dhaka',
+        catCode: 'bedroom',
+        name: 'Zen Bathroom',
+        desc: 'A gorgeous spa bathroom equipped with a large round stone soaking tub, light oak floor grates, and premium stone tiles.',
+        style: 'Spa Minimalist',
+        area: '240 sq ft',
+        year: '2025',
+        materials: 'Statuario Marble Tiles, Solid Teakwood Grates, Matte Black Fixtures'
+      },
+      {
+        image: 'pictures/17.jpeg',
+        category: 'Balcony · Dhanmondi, Dhaka',
+        catCode: 'living',
+        name: 'Veranda Escape',
+        desc: 'Cozy semi-outdoor deck featuring high-quality weather-resistant wood panels, hanging basket swing, and custom planters for privacy.',
+        style: 'Biophilic Outdoor',
+        area: '310 sq ft',
+        year: '2025',
+        materials: 'Composite Deck Wood, Synthetic Rattan Swing, Built-in Steel Planters'
+      }
+    ];
+
+    // Filter categories state
+    let activeCategory = 'all';
+    let projectsExpanded = false;
+    const toggleProjectsBtn = document.getElementById('toggleProjectsBtn');
+
+    function updateProjectsGrid() {
+      const cards = document.querySelectorAll('.proj-card');
+      let visibleCount = 0;
+
+      cards.forEach(card => {
+        const cat = card.getAttribute('data-category');
+        const matchesFilter = (activeCategory === 'all' || cat === activeCategory);
+
+        if (matchesFilter) {
+          visibleCount++;
+          if (projectsExpanded || visibleCount <= 6) {
+            card.style.display = 'block';
+            // Subtle transition classes
+            setTimeout(() => card.classList.add('show'), 10);
+          } else {
+            card.style.display = 'none';
+            card.classList.remove('show');
+          }
+        } else {
+          card.style.display = 'none';
+          card.classList.remove('show');
+        }
+      });
+
+      // Show/Hide toggle button based on visible projects count
+      const toggleBtnContainer = toggleProjectsBtn.parentElement;
+      if (visibleCount > 6) {
+        toggleBtnContainer.style.display = 'block';
+        if (projectsExpanded) {
+          toggleProjectsBtn.innerHTML = `
+            Show Less
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 4px;">
+              <polyline points="18 15 12 9 6 15"/>
+            </svg>
+          `;
+        } else {
+          toggleProjectsBtn.innerHTML = `
+            Show All Projects
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 4px;">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          `;
+        }
+      } else {
+        toggleBtnContainer.style.display = 'none';
+      }
+    }
+
+    function setFilter(cat) {
+      activeCategory = cat;
+      projectsExpanded = false; // Reset expand on change
+
+      // Update active tabs styling
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        if (btn.getAttribute('data-filter') === cat) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+
+      updateProjectsGrid();
+    }
+
+    // Connect filter tab buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        setFilter(btn.getAttribute('data-filter'));
+      });
+    });
+
+    // Connect upper categories cards to filtering
+    document.querySelectorAll('.cat-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const cat = card.getAttribute('data-category');
+        if (cat) {
+          setFilter(cat);
+          document.getElementById('projects').scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+
+    // Expand toggle button handler
+    toggleProjectsBtn.addEventListener('click', () => {
+      projectsExpanded = !projectsExpanded;
+      updateProjectsGrid();
+      if (!projectsExpanded) {
+        document.getElementById('projects').scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+
+    // Modal elements
+    const projectModal = document.getElementById('projectModal');
+    const modalImg = document.getElementById('modalImg');
+    const modalCat = document.getElementById('modalCat');
+    const modalName = document.getElementById('modalName');
+    const modalDesc = document.getElementById('modalDesc');
+    const modalSpecStyle = document.getElementById('modalSpecStyle');
+    const modalSpecArea = document.getElementById('modalSpecArea');
+    const modalSpecYear = document.getElementById('modalSpecYear');
+    const modalSpecMaterials = document.getElementById('modalSpecMaterials');
+    const modalCloseBtn = document.getElementById('modalCloseBtn');
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalPrevBtn = document.getElementById('modalPrevBtn');
+    const modalNextBtn = document.getElementById('modalNextBtn');
+    const modalInquireBtn = document.getElementById('modalInquireBtn');
+
+    let currentProjectIndex = 0;
+
+    function openModal(index) {
+      currentProjectIndex = index;
+      const data = projectsData[index];
+      if (!data) return;
+
+      modalImg.src = data.image;
+      modalImg.alt = data.name;
+      modalCat.innerHTML = data.category;
+      modalName.innerHTML = data.name;
+      modalDesc.innerHTML = data.desc;
+      modalSpecStyle.innerHTML = data.style;
+      modalSpecArea.innerHTML = data.area;
+      modalSpecYear.innerHTML = data.year;
+      modalSpecMaterials.innerHTML = data.materials;
+
+      projectModal.classList.add('active');
+      projectModal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
+    }
+
+    function closeModal() {
+      projectModal.classList.remove('active');
+      projectModal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('modal-open');
+    }
+
+    function showPrevProject() {
+      let prevIndex = currentProjectIndex;
+      const originalIndex = currentProjectIndex;
+      while (true) {
+        prevIndex = prevIndex - 1;
+        if (prevIndex < 0) prevIndex = projectsData.length - 1;
+        if (activeCategory === 'all' || projectsData[prevIndex].catCode === activeCategory || prevIndex === originalIndex) {
+          break;
+        }
+      }
+      openModal(prevIndex);
+    }
+
+    function showNextProject() {
+      let nextIndex = currentProjectIndex;
+      const originalIndex = currentProjectIndex;
+      while (true) {
+        nextIndex = nextIndex + 1;
+        if (nextIndex >= projectsData.length) nextIndex = 0;
+        if (activeCategory === 'all' || projectsData[nextIndex].catCode === activeCategory || nextIndex === originalIndex) {
+          break;
+        }
+      }
+      openModal(nextIndex);
+    }
+
+    // Click event on project cards
+    document.querySelectorAll('.proj-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const index = parseInt(card.getAttribute('data-index'), 10);
+        openModal(index);
+      });
+    });
+
+    // Close modal triggers
+    modalCloseBtn.addEventListener('click', closeModal);
+    modalOverlay.addEventListener('click', closeModal);
+
+    // Prev / Next button events
+    modalPrevBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      showPrevProject();
+    });
+    modalNextBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      showNextProject();
+    });
+
+    // Keyboard controls (Esc to close, Left/Right for sliding)
+    document.addEventListener('keydown', (e) => {
+      if (!projectModal.classList.contains('active')) return;
+      if (e.key === 'Escape') closeModal();
+      if (e.key === 'ArrowLeft') showPrevProject();
+      if (e.key === 'ArrowRight') showNextProject();
+    });
+
+    // Inquire CTA handler
+    modalInquireBtn.addEventListener('click', () => {
+      closeModal();
+      document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // Initialize Grid layout on load
+    updateProjectsGrid();
   </script>
 
 </body>
